@@ -1,0 +1,7 @@
+langchain
+langchain-deepseek
+langgraph
+python-dotenv
+fastapi
+uvicorn
+streamlit

@@ -1,0 +1,15 @@
+岗位：AI应用开发工程师（应届/初级）
+地点：杭州
+
+岗位职责：
+1. 负责基于大模型的AI Agent应用开发，包括工具调用、RAG检索、多智能体协作。
+2. 使用LangChain、LangGraph等框架搭建Agent流程。
+3. 与产品、后端协作，完成AI功能的接口设计与落地。
+
+任职要求：
+1. 本科及以上学历，计算机、软件工程相关专业。
+2. 熟悉Python，了解Java更佳。
+3. 熟悉LangChain、RAG、Prompt Engineering。
+4. 有FastAPI后端开发经验。
+5. 了解向量数据库（Chroma、Milvus等）。
+6. 有AI Agent项目经验者优先。

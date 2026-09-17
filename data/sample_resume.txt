@@ -1,0 +1,16 @@
+刁子豪
+闽南师范大学 软件工程 本科 2022.09-2026.06
+
+技能：
+- 编程语言：Java、Python、C/C++
+- 后端：Spring、Spring Boot、MyBatis、Tomcat
+- 数据库：MySQL、SQL Server
+- 前端：HTML、CSS、JavaScript
+- 测试：Postman、JUnit
+- 其他：Git、Linux、Photoshop、MS Excel
+
+项目/实训：
+- 参与实训项目，负责数据库设计与部分后端模块开发，团队获实训报告二等奖。
+
+荣誉：
+- 实训报告团队二等奖
