@@ -8,7 +8,6 @@
 
 ## 架构
 
-```mermaid
 graph TD
     START --> supervisor
     supervisor -->|jd_keywords 为空| jd_parser
@@ -22,26 +21,22 @@ graph TD
     question_generator --> supervisor
     evaluator --> supervisor
 
-Agent	        职责
+Agent	          职责
 Supervisor	    根据当前状态决定下一步执行哪个节点
 JD 解析	        从 JD 提取技术关键词、软技能、加分项、岗位级别
-简历匹配	    对比简历和 JD，输出匹配点、部分匹配、缺失项
-提问	        针对缺失技能和历史弱项生成面试问题
-评估	        对回答打分，给出优点、不足、改进建议和弱项标签
+简历匹配	      对比简历和 JD，输出匹配点、部分匹配、缺失项
+提问	          针对缺失技能和历史弱项生成面试问题
+评估	          对回答打分，给出优点、不足、改进建议和弱项标签
+
 技术栈
 编排：LangGraph
-
 模型：DeepSeek（deepseek-chat）
-
 工具：LangChain @tool
-
 持久化：SQLite
-
 接口：FastAPI + Uvicorn
-
 报告：Markdown
 
-快速开始
+## 快速开始
 1. 安装依赖
 bash
 python -m venv .venv
@@ -93,7 +88,7 @@ json
   "weak_tags": ["概念不深入"],
   "is_last": false
 }
-项目结构
+## 项目结构
 text
 interview-agent/
 ├── app/

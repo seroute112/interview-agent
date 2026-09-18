@@ -1,6 +1,3 @@
-刁子豪
-闽南师范大学 软件工程 本科 2022.09-2026.06
-
 技能：
 - 编程语言：Java、Python、C/C++
 - 后端：Spring、Spring Boot、MyBatis、Tomcat

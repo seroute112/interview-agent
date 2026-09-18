@@ -45,6 +45,11 @@ class AnswerResponse(BaseModel):
 
 @router.post("/interview/start", response_model=StartResponse)
 def start_interview(req : StartRequest):
+    if not req.jd.strip():
+        raise HTTPException(status_code=400, detail="JD 不能为空")
+    if not req.resume.strip():
+        raise HTTPException(status_code=400, detail="简历不能为空")
+
     state : InterviewState = {
         "messages": [],
         "jd": req.jd,
@@ -71,6 +76,9 @@ def start_interview(req : StartRequest):
 
 @router.post("/interview/answer",response_model=AnswerResponse)
 def answer_question(req : AnswerRequest):
+    if not req.answer.strip():
+        raise HTTPException(status_code=400, detail="回答不能为空")
+    
     state = get_session(req.session_id)
     if not state:
         raise HTTPException(status_code=404,detail="回话不存在或已过期")
