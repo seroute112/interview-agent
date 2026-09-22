@@ -1,20 +1,30 @@
 from langgraph import graph
 from langgraph.graph import StateGraph,START,END
 from app.state import InterviewState
-from app.agents.jd_parser import jd_parser_node
-from app.agents.resume_matcher import resume_matcher_node
-from app.agents.question_generator import question_generator_node
-from app.agents.evaluator import evaluator_node
+from app.agents.quest_answer.jd_parser import jd_parser_node
+from app.agents.quest_answer.resume_matcher import resume_matcher_node
+from app.agents.quest_answer.question_generator import question_generator_node
+# from app.agents.evaluator import evaluator_node
+from app.agents.quest_answer.evaluator_tech import evaluator_tech_node
+from app.agents.quest_answer.evaluator_engineering import evaluator_engineering_node
+from app.agents.quest_answer.evaluator_communication import evaluator_communication_node
+from app.agents.quest_answer.summarizer import summarizer_node
 from app.agents.supervisor import supervisor_node,router
+from app.agents.quest_answer.reflector import reflector_node
 
 def build_graph():
     builder = StateGraph(InterviewState)
 
+    builder.add_node("supervisor",supervisor_node)
     builder.add_node("jd_parser",jd_parser_node)
     builder.add_node("resume_matcher",resume_matcher_node)
     builder.add_node("question_generator",question_generator_node)
-    builder.add_node("evaluator",evaluator_node)
-    builder.add_node("supervisor",supervisor_node)
+    builder.add_node("evaluator_tech",evaluator_tech_node)
+    builder.add_node("evaluator_engineering",evaluator_engineering_node)
+    builder.add_node("evaluator_communication",evaluator_communication_node)
+    builder.add_node("summarizer",summarizer_node)
+    builder.add_node("reflector",reflector_node)
+    # builder.add_node("evaluator",evaluator_node)
 
     builder.add_edge(START,"supervisor")
     builder.add_conditional_edges("supervisor",router)
@@ -22,7 +32,14 @@ def build_graph():
     builder.add_edge("jd_parser","supervisor")
     builder.add_edge("resume_matcher","supervisor")
     builder.add_edge("question_generator","supervisor")
-    builder.add_edge("evaluator","supervisor")
+
+    builder.add_edge("evaluator_tech", "evaluator_engineering")
+    builder.add_edge("evaluator_engineering", "evaluator_communication")
+    builder.add_edge("evaluator_communication", "summarizer")
+    # builder.add_edge("evaluator","supervisor")
+
+    builder.add_edge("summarizer", "supervisor")
+    builder.add_edge("reflector", "supervisor")
 
     return builder.compile()
 

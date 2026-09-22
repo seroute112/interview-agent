@@ -2,6 +2,7 @@ import json
 from app.state import InterviewState
 from app.config import get_llm
 from app.memory.topic_tracker import update_topic_progress
+from app.tools.llm_json import parser_llm_json
 
 EVALUATOR_PROMPT = """你是一个技术面试官。请根据候选人的回答进行评估，只返回JSON，不要其他内容
 

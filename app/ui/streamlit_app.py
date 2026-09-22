@@ -7,8 +7,11 @@ sys.path.insert(0,os.path.dirname(os.path.dirname(os.path.dirname(__file__))))
 from app.memory.sqlite_store import init_db,save_evaluation
 from app.graph import graph
 from app.agents.evaluator import evaluator_node
+from app.memory.topic_tracker import init_topic_table
 
 init_db()
+init_topic_table()
+
 ## 这个是不使用FastAPI的版本
 st.set_page_config(page_title="AI 面试系统",layout="wide")
 st.title("多智能体面试模拟与评估系统")
@@ -24,6 +27,7 @@ if "evaluations" not in st.session_state:
 
 with st.sidebar:
     st.header("输入")
+    
     jd = st.text_area("JD 文本",height=200)
     resume = st.text_area("简历文本",height=200)
     start = st.button("开始面试")

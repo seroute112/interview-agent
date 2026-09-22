@@ -1,4 +1,4 @@
-from app.agents.jd_parser import jd_parser_node
+from app.agents.quest_anser.jd_parser import jd_parser_node
 
 def make_state(jd="", resume=""):
     return {

@@ -24,28 +24,92 @@ if "evaluations" not in st.session_state:
     st.session_state.evaluations = []
 
 with st.sidebar:
-    st.header("输入")
-    jd = st.text_area("JD 文本",height=200)
-    resume = st.text_area("简历文本",height=200)
-    start = st.button("开始面试")
+    mode = st.radio("模式", ["面试模式", "对话模式"])
 
-if jd and resume and start:
-    with st.spinner("正在解析JD与简历"):
-        resp = httpx.post(
-            f"{API_BASE}/interview/start",
-            json={"jd" : jd, "resume" : resume},
-            timeout=120.0,
-        )
-    if resp.status_code == 200:
-        data = resp.json()
-        st.session_state.session_id = data["session_id"]
-        st.session_state.questions = data["questions"]
-        st.session_state.current_index = 0
-        st.session_state.evaluations = []
-        st.session_state.jd_keywords = data.get("jd_keywords",[])
-        st.session_state.resume_summary = data.get("resume_summary",[])
+    if mode == "对话模式":
+        st.title("AI 面试助手")
+
+        if "chat_session" not in st.session_state:
+            st.session_state.chat_session = None
+        if "chat_history" not in st.session_state:
+            st.session_state.chat_history = []
+
+        # 显示历史消息
+        for msg in st.session_state.chat_history:
+            with st.chat_message(msg["role"]):
+                st.write(msg["content"])
+
+        # 输入框
+        user_input = st.chat_input("输入消息...")
+        if user_input:
+            st.session_state.chat_history.append({"role": "user", "content": user_input})
+
+            resp = httpx.post(
+                f"{API_BASE}/chat",
+                json={
+                    "session_id": st.session_state.chat_session,
+                    "message": user_input,
+                },
+                timeout=120.0,
+            )
+            if resp.status_code == 200:
+                data = resp.json()
+                st.session_state.chat_session = data["session_id"]
+                st.session_state.chat_history.append(
+                    {"role": "assistant", "content": data["reply"]}
+                )
+                st.rerun()
+            else:
+                st.error(f"请求失败：{resp.text}")
     else:
-        st.error(f"启动失败:{resp.text}")
+        st.header("输入")
+        input_mode = st.radio("输入方式",["手动输入","上传文件"])
+
+        if input_mode == "手动输入":
+            jd = st.text_area("JD 文本",height=200)
+            resume = st.text_area("简历文本",height=200)
+            start = st.button("开始面试")
+
+            if jd and resume and start:
+                with st.spinner("正在解析JD与简历"):
+                    resp = httpx.post(
+                        f"{API_BASE}/interview/start",
+                        json={"jd" : jd, "resume" : resume},
+                        timeout=120.0,
+                    )
+                if resp.status_code == 200:
+                    data = resp.json()
+                    st.session_state.session_id = data["session_id"]
+                    st.session_state.questions = data["questions"]
+                    st.session_state.current_index = 0
+                    st.session_state.evaluations = []
+                    st.session_state.jd_keywords = data.get("jd_keywords",[])
+                    st.session_state.resume_summary = data.get("resume_summary",[])
+                else:
+                    st.error(f"启动失败：状态码 {resp.status_code}，内容：{resp.text}")
+        else:
+            jd_file = st.file_uploader("上传JD",type=["txt","pdf","docx"])
+            resume_file = st.file_uploader("上传简历",type=["txt","pdf","docx"])
+            start = st.button("开始面试")
+
+            if start and jd_file and resume_file:
+                files = {"jd_file":(jd_file.name,jd_file.getvalue()),"resume_file":(resume_file.name,resume_file.getvalue())}
+                with st.spinner("正在解析JD与简历"):
+                    resp = httpx.post(
+                        f"{API_BASE}/interview/start/upload",
+                        files=files,
+                        timeout=120.0,
+                    )
+                if resp.status_code == 200:
+                    data = resp.json()
+                    st.session_state.session_id = data["session_id"]
+                    st.session_state.questions = data["questions"]
+                    st.session_state.current_index = 0
+                    st.session_state.evaluations = []
+                    st.session_state.jd_keywords = data.get("jd_keywords",[])
+                    st.session_state.resume_summary = data.get("resume_summary",[])
+                else:
+                    st.error(f"启动失败:{resp.text}")
 
 if st.session_state.session_id:
     st.subheader("匹配分析结果")
@@ -97,4 +161,21 @@ if st.session_state.session_id:
                     st.write(f"问题：{e['question']}")
                     st.write(f"回答：{e['answer']}")
                     st.write(f"建议：{e['suggestion']}")
+                    if st.button("继续下一轮"):
+                        with st.spinner("正在生成本轮题目..."):
+                            resp = httpx.post(
+                                f"{API_BASE}/interview/next_round",
+                                json={"session_id": st.session_state.session_id},
+                                timeout=120.0,
+                            )
+                        if resp.status_code == 200:
+                            data = resp.json()
+                            st.session_state.questions = data["questions"]
+                            st.session_state.current_index = 0
+                            st.session_state.evaluations = []
+                            st.session_state.round = data["round"]
+                            st.success(f"进入第 {data['round']} 轮。{data['previous_summary']}")
+                            st.rerun()
+                        else:
+                            st.error(f"下一轮启动失败：{resp.text}")
 

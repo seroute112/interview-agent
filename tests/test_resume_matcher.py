@@ -1,4 +1,4 @@
-from app.agents.resume_matcher import resume_matcher_node
+from app.agents.quest_anser.resume_matcher import resume_matcher_node
 from tests.test_jd_parser import make_state
 
 def test_resume_matcher_returns_all_fields():
